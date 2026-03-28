@@ -31,21 +31,8 @@
     font-family: 'DM Sans', sans-serif;
     font-weight: 300;
     overflow-x: hidden;
-    cursor: none;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='18' viewBox='0 0 14 18'%3E%3Cpath d='M0 0L0 14L4 10.5L6.5 16.5L8.5 15.5L6 9.5L10 9.5Z' fill='%236b8eff' stroke='%23080d1e' stroke-width='1' stroke-linejoin='round'/%3E%3C/svg%3E") 0 0, default;
   }
-
-  /* Custom cursor */
-  .cursor {
-    position: fixed;
-    width: 8px; height: 8px;
-    background: var(--peri);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
-  }
-  body:has(a:hover) .cursor, body:has(button:hover) .cursor { width: 14px; height: 14px; }
 
   /* Star field */
   .stars {
@@ -202,7 +189,7 @@
     font-weight: 300;
     outline: none;
     transition: border-color 0.2s, background 0.2s;
-    cursor: none;
+    cursor: text;
   }
   .waitlist-form input::placeholder { color: var(--faint); }
   .waitlist-form input:focus {
@@ -220,7 +207,7 @@
     font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    cursor: none;
+    cursor: pointer;
     transition: background 0.2s, border-color 0.2s, transform 0.1s;
     white-space: nowrap;
   }
@@ -516,8 +503,6 @@
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
-
 <!-- Stars -->
 <div class="stars" id="stars"></div>
 
@@ -673,6 +658,17 @@
     </div>
   </section>
 
+  <!-- PHILOSOPHY -->
+  <div style="position: relative; z-index: 1; padding: 6rem 2rem; max-width: 800px; margin: 0 auto;">
+    <span class="section-label reveal">THE THESIS</span>
+    <h2 class="reveal" style="font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.2; color: var(--text); margin-bottom: 2.5rem;">Your person exists. You will probably never find them.</h2>
+    <p class="reveal" style="font-family: 'DM Sans', sans-serif; color: var(--muted); font-size: 1rem; line-height: 1.85; margin-bottom: 1.5rem;">There are eight billion people on this planet. Your statistically optimal match — the person whose psychology, values, attachment patterns, communication style, humor, and biology align with yours more than anyone else alive — exists among them. The probability that you have already met them is so close to zero it is not worth calculating.</p>
+    <p class="reveal" style="font-family: 'DM Sans', sans-serif; color: var(--muted); font-size: 1rem; line-height: 1.85; margin-bottom: 1.5rem;">We are limited to a vanishingly small slice of the possible. Geography places you in one city. Language locks you inside a cultural radius. Social hierarchy means you only encounter people within a narrow band of your own world. The person who is genuinely best suited for you might be in Seoul, or São Paulo, or a small town in Portugal. They might not speak your language. If you passed each other on the street, neither of you would stop. The universe would not announce the moment.</p>
+    <p class="reveal" style="font-family: 'DM Sans', sans-serif; color: var(--muted); font-size: 1rem; line-height: 1.85; margin-bottom: 1.5rem;">This is not a romantic observation. It is a statistical one. And it is the reason we built WeekOne. Not because love should be calculated — but because the barriers that prevent people from finding each other are real, and an algorithm is one of the few tools powerful enough to begin collapsing them. Every dimension we measure, every question we ask, every pattern we extract from how you describe falling in love — it is all in service of one goal: closing the distance between you and the person who already exists for you.</p>
+    <p class="reveal" style="font-family: 'DM Sans', sans-serif; color: var(--muted); font-size: 1rem; line-height: 1.85; margin-bottom: 1.5rem;">We are not trying to simulate love. We are trying to remove the noise that prevents it. The rest is up to you.</p>
+    <div class="reveal" style="width: 60px; height: 1px; background: var(--peri); opacity: 0.4; margin: 2.5rem auto 0;"></div>
+  </div>
+
   <!-- MANIFESTO -->
   <div class="manifesto reveal">
     <p class="manifesto-quote">
@@ -706,16 +702,12 @@
 </main>
 
 <footer>
-  <p class="footer-text">© 2026 WeekOne &nbsp;·&nbsp; Built with intention &nbsp;·&nbsp; The algorithm is never paywalled</p>
+  <p class="footer-text">© 2026 WeekOne &nbsp;·&nbsp; Built with intention &nbsp;·&nbsp; The algorithm is never paywalled<a href="https://instagram.com/weekone.app" target="_blank" rel="noopener" style="color: var(--faint); text-decoration: none; letter-spacing: 0.06em; font-size: 0.72rem; margin-left: 1.5rem; transition: color 0.2s;" onmouseover="this.style.color='var(--peri)'" onmouseout="this.style.color='var(--faint)'">@weekone.app</a></p>
 </footer>
 
 <script>
-// Cursor
-const cursor = document.getElementById('cursor');
-document.addEventListener('mousemove', e => {
-  cursor.style.left = e.clientX + 'px';
-  cursor.style.top = e.clientY + 'px';
-});
+const SUPABASE_URL = 'https://nfjoxixjeiprbzxotxbx.supabase.co';
+const SUPABASE_ANON_KEY = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mam94aXhqZWlwcmJ6eG90eGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTc4MzIsImV4cCI6MjA5MDIzMzgzMn0._ShNQDZ5k9c4AEUeboL9Jh57m9J8wvW7m9903BHGINg';
 
 // Stars
 const starsEl = document.getElementById('stars');
@@ -748,39 +740,46 @@ const observer = new IntersectionObserver(entries => {
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// Waitlist submit — stores locally since no backend yet
-function submitWaitlist() {
+// Waitlist submit
+async function submitWaitlist() {
   const email = document.getElementById('emailInput').value.trim();
   if (!email || !email.includes('@')) {
     document.getElementById('emailInput').style.borderColor = 'rgba(255,107,107,0.6)';
     setTimeout(() => document.getElementById('emailInput').style.borderColor = '', 1500);
     return;
   }
-  saveEmail(email);
+  await saveEmail(email);
   document.getElementById('waitlistForm').style.display = 'none';
   document.getElementById('successMsg').style.display = 'block';
 }
 
-function submitWaitlist2() {
+async function submitWaitlist2() {
   const email = document.getElementById('emailInput2').value.trim();
   if (!email || !email.includes('@')) {
     document.getElementById('emailInput2').style.borderColor = 'rgba(255,107,107,0.6)';
     setTimeout(() => document.getElementById('emailInput2').style.borderColor = '', 1500);
     return;
   }
-  saveEmail(email);
+  await saveEmail(email);
   document.getElementById('waitlistForm2').style.display = 'none';
   document.getElementById('successMsg2').style.display = 'block';
 }
 
-function saveEmail(email) {
-  const existing = JSON.parse(localStorage.getItem('weekone_waitlist') || '[]');
-  if (!existing.includes(email)) {
-    existing.push(email);
-    localStorage.setItem('weekone_waitlist', JSON.stringify(existing));
+async function saveEmail(email) {
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ email, source: 'landing_page', created_at: new Date().toISOString() })
+    });
+  } catch (err) {
+    console.log('Waitlist email (fallback):', email);
   }
-  // Log for easy retrieval
-  console.log('Waitlist emails:', JSON.parse(localStorage.getItem('weekone_waitlist')));
 }
 
 // Enter key
