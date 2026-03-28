@@ -725,15 +725,13 @@ for (let i = 0; i < 120; i++) {
   const size = Math.random() * 2 + 0.5;
   const minOp = (Math.random() * 0.1 + 0.05).toFixed(2);
   const maxOp = (Math.random() * 0.4 + 0.2).toFixed(2);
-  s.style.cssText = `
-    width:${size}px; height:${size}px;
-    left:${Math.random()*100}%;
-    top:${Math.random()*100}%;
-    --d:${3+Math.random()*6}s;
-    --delay:-${Math.random()*6}s;
-    --min-op:${minOp};
-    --max-op:${maxOp};
-  `;
+  s.style.cssText = 'width:' + size + 'px; height:' + size + 'px; ' +
+    'left:' + (Math.random()*100) + '%; ' +
+    'top:' + (Math.random()*100) + '%; ' +
+    '--d:' + (3+Math.random()*6) + 's; ' +
+    '--delay:-' + (Math.random()*6) + 's; ' +
+    '--min-op:' + minOp + '; ' +
+    '--max-op:' + maxOp + ';';
   starsEl.appendChild(s);
 }
 
