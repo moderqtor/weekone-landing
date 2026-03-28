@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeekOne — One match. One week.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #080d1e;
+    --deep: #0d1530;
+    --mid: #1a2548;
+    --blue: #3d5af1;
+    --peri: #6b8eff;
+    --glow: #4d6fff;
+    --warm: #f7f3ee;
+    --text: #e8ecf8;
+    --muted: #8a9ab8;
+    --faint: #3a4a6a;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--peri);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+  }
+  body:has(a:hover) .cursor, body:has(button:hover) .cursor { width: 14px; height: 14px; }
+
+  /* Star field */
+  .stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--d) ease-in-out infinite var(--delay);
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: var(--min-op); transform: scale(1); }
+    50% { opacity: var(--max-op); transform: scale(1.3); }
+  }
+
+  /* Ambient glow orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(80px);
+    z-index: 0;
+  }
+  .orb-1 { width: 600px; height: 600px; background: rgba(61,90,241,0.08); top: -200px; right: -150px; animation: drift1 20s ease-in-out infinite; }
+  .orb-2 { width: 400px; height: 400px; background: rgba(107,142,255,0.06); bottom: 100px; left: -100px; animation: drift2 25s ease-in-out infinite; }
+  .orb-3 { width: 300px; height: 300px; background: rgba(61,90,241,0.05); top: 40%; left: 40%; animation: drift3 18s ease-in-out infinite; }
+  @keyframes drift1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,40px)} }
+  @keyframes drift2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,-30px)} }
+  @keyframes drift3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-20px,20px)} }
+
+  /* Layout */
+  main { position: relative; z-index: 1; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    padding: 1.5rem 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 100;
+    background: linear-gradient(to bottom, rgba(8,13,30,0.9), transparent);
+    backdrop-filter: blur(8px);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    text-decoration: none;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+  .nav-cta {
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--peri);
+    text-decoration: none;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
+    transition: color 0.2s;
+  }
+  .nav-cta:hover { color: white; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 2rem 4rem;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--peri);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.5s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.5rem, 9vw, 7.5rem);
+    font-weight: 300;
+    line-height: 1.0;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    opacity: 0;
+    animation: fadeUp 1s ease 0.7s forwards;
+    max-width: 900px;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--peri);
+  }
+
+  .hero-divider {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--peri), transparent);
+    margin: 2.5rem auto;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.1s forwards;
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0 auto 3rem;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.2s forwards;
+  }
+  .hero-sub strong {
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  /* FORM */
+  .waitlist-form {
+    display: flex;
+    gap: 0;
+    max-width: 460px;
+    width: 100%;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.4s forwards;
+    position: relative;
+  }
+  .waitlist-form input {
+    flex: 1;
+    padding: 1rem 1.4rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(107,142,255,0.2);
+    border-right: none;
+    border-radius: 4px 0 0 4px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: none;
+  }
+  .waitlist-form input::placeholder { color: var(--faint); }
+  .waitlist-form input:focus {
+    border-color: rgba(107,142,255,0.5);
+    background: rgba(255,255,255,0.06);
+  }
+  .waitlist-form button {
+    padding: 1rem 1.8rem;
+    background: var(--blue);
+    border: 1px solid var(--blue);
+    border-radius: 0 4px 4px 0;
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.2s, border-color 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .waitlist-form button:hover { background: var(--glow); border-color: var(--glow); }
+  .waitlist-form button:active { transform: scale(0.98); }
+
+  .form-note {
+    font-size: 0.72rem;
+    color: var(--faint);
+    margin-top: 0.9rem;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.6s forwards;
+  }
+
+  .success-msg {
+    display: none;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--peri);
+    padding: 1rem 0;
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  /* SCROLL INDICATOR */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--faint);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeIn 1s ease 2.2s forwards;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--faint), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse { 0%,100%{opacity:0.3; transform:scaleY(1)} 50%{opacity:0.8; transform:scaleY(1.1)} }
+
+  /* SECTIONS */
+  section {
+    position: relative; z-index: 1;
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    border-top: 1px solid rgba(107,142,255,0.1);
+    border-bottom: 1px solid rgba(107,142,255,0.1);
+    padding: 4rem 2rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative; z-index: 1;
+  }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 300;
+    color: var(--peri);
+    display: block;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* DIFFERENT SECTION */
+  .different-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .diff-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(107,142,255,0.1);
+    border-radius: 2px;
+    padding: 2rem;
+    transition: border-color 0.3s, background 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .diff-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--peri);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .diff-card:hover { border-color: rgba(107,142,255,0.25); background: rgba(107,142,255,0.03); }
+  .diff-card:hover::before { opacity: 1; }
+  .diff-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--peri);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+  .diff-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 0.7rem;
+    line-height: 1.3;
+  }
+  .diff-body {
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: var(--muted);
+  }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--peri);
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+  .section-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--text);
+    max-width: 600px;
+  }
+  .section-headline em { font-style: italic; color: var(--peri); }
+
+  /* ALGORITHM VISUAL */
+  .algo-visual {
+    margin-top: 3.5rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .algo-stage {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 1.4rem 0;
+    border-bottom: 1px solid rgba(107,142,255,0.08);
+    transition: background 0.2s;
+    position: relative;
+  }
+  .algo-stage:last-child { border-bottom: none; }
+  .algo-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--peri);
+    flex-shrink: 0;
+    margin-top: 5px;
+    box-shadow: 0 0 12px rgba(107,142,255,0.4);
+  }
+  .algo-content { flex: 1; }
+  .algo-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+    letter-spacing: 0.02em;
+  }
+  .algo-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+  .algo-weight {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    color: var(--peri);
+    font-weight: 300;
+    flex-shrink: 0;
+    min-width: 52px;
+    text-align: right;
+  }
+
+  /* MANIFESTO */
+  .manifesto {
+    border: 1px solid rgba(107,142,255,0.15);
+    background: rgba(61,90,241,0.04);
+    padding: 4rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto 6rem;
+  }
+  .manifesto-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .manifesto-author {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 1.5rem;
+    display: block;
+  }
+
+  /* BOTTOM CTA */
+  .bottom-cta {
+    text-align: center;
+    padding: 8rem 2rem;
+    position: relative; z-index: 1;
+    border-top: 1px solid rgba(107,142,255,0.08);
+  }
+  .bottom-cta-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+  }
+  .bottom-cta-title em { font-style: italic; color: var(--peri); }
+  .bottom-cta-sub {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 3rem;
+    font-weight: 300;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid rgba(107,142,255,0.06);
+    position: relative; z-index: 1;
+  }
+  .footer-text {
+    font-size: 0.72rem;
+    color: var(--faint);
+    letter-spacing: 0.06em;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* MOBILE */
+  @media (max-width: 680px) {
+    .stats-bar { grid-template-columns: repeat(2, 1fr); padding: 3rem 1.5rem; }
+    .different-grid { grid-template-columns: 1fr; }
+    nav { padding: 1.2rem 1.5rem; }
+    .manifesto { padding: 2.5rem 1.5rem; }
+    .waitlist-form { flex-direction: column; }
+    .waitlist-form input { border-right: 1px solid rgba(107,142,255,0.2); border-bottom: none; border-radius: 4px 4px 0 0; }
+    .waitlist-form button { border-radius: 0 0 4px 4px; padding: 0.9rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<!-- Stars -->
+<div class="stars" id="stars"></div>
+
+<!-- Orbs -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<nav>
+  <a class="nav-logo" href="#">WeekOne</a>
+  <a class="nav-cta" href="#emailInput" id="navWaitlist">Join the waitlist</a>
+</nav>
+
+<main>
+  <!-- HERO -->
+  <div class="hero">
+    <span class="hero-eyebrow">The algorithm has been built. Now we find you.</span>
+
+    <h1 class="hero-title">
+      You have a best match<br>
+      somewhere in the world.<br>
+      <em>We will find them.</em>
+    </h1>
+
+    <div class="hero-divider"></div>
+
+    <p class="hero-sub">
+      Not an app that keeps you swiping.<br>
+      <strong>One match. One week. Every Sunday at 8PM.</strong><br>
+      The most sophisticated compatibility algorithm ever built — and it is never paywalled.
+    </p>
+
+    <div id="join">
+      <div class="waitlist-form" id="waitlistForm">
+        <input type="email" id="emailInput" placeholder="your@email.com" autocomplete="email">
+        <button type="button" onclick="submitWaitlist()">Reserve my spot</button>
+      </div>
+      <div class="success-msg" id="successMsg">
+        You're on the list. We'll be in touch when doors open.
+      </div>
+      <p class="form-note">No spam. No notifications. Just a message when we're ready.</p>
+    </div>
+
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span>scroll</span>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar reveal">
+    <div class="stat-item">
+      <span class="stat-num">33+</span>
+      <span class="stat-label">Assessment<br>dimensions</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">1–2hr</span>
+      <span class="stat-label">Onboarding<br>depth</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">8PM</span>
+      <span class="stat-label">Sunday global<br>reveal</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">0</span>
+      <span class="stat-label">Swipes.<br>Ever.</span>
+    </div>
+  </div>
+
+  <!-- DIFFERENT -->
+  <section>
+    <span class="section-label reveal">Why it's different</span>
+    <h2 class="section-headline reveal">Not another dating app.<br><em>Something else entirely.</em></h2>
+
+    <div class="different-grid">
+      <div class="diff-card reveal">
+        <span class="diff-num">01</span>
+        <div class="diff-title">The algorithm is the product</div>
+        <div class="diff-body">Every other app optimizes for engagement — swipes, likes, time in app. We optimize for match quality. The algorithm scores compatibility across psychology, values, lifestyle, attraction, communication, and more. It is never hidden behind a paywall.</div>
+      </div>
+      <div class="diff-card reveal">
+        <span class="diff-num">02</span>
+        <div class="diff-title">Onboarding that takes hours on purpose</div>
+        <div class="diff-body">An hour-long onboarding isn't a flaw. It's a filter. The people who complete it are the people who actually want something real. Behavioral Big Five, attachment style, love theory, moral dilemmas, AI conversation — we build a deeper profile than your therapist has.</div>
+      </div>
+      <div class="diff-card reveal">
+        <span class="diff-num">03</span>
+        <div class="diff-title">One match. Full attention.</div>
+        <div class="diff-body">No feed. No browsing. No "who else is out there." Sunday 8PM, worldwide, simultaneously — everyone in the pool discovers their match at once. The ritual creates something no swipe app can: genuine anticipation, and genuine presence.</div>
+      </div>
+      <div class="diff-card reveal">
+        <span class="diff-num">04</span>
+        <div class="diff-title">Looks matter. We account for them honestly.</div>
+        <div class="diff-body">Physical attraction is real. We score it privately — attractiveness range matching, mutual preference gates, AI vision scoring. Never shown to your match. Never used to exclude. Used to make the match actually work when you meet.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALGORITHM -->
+  <section>
+    <span class="section-label reveal">Under the hood</span>
+    <h2 class="section-headline reveal">The deepest compatibility engine<br><em>ever built for a dating app.</em></h2>
+
+    <div class="algo-visual">
+      <div class="algo-stage reveal">
+        <div class="algo-dot" style="background:#7c3aed; box-shadow:0 0 12px rgba(124,58,237,0.4)"></div>
+        <div class="algo-content">
+          <div class="algo-name">Psychological</div>
+          <div class="algo-desc">Big Five personality (20 behavioral scenarios), attachment style (12 questions), core relationship fears, triangular love theory, love languages — each dimension modulates the others</div>
+        </div>
+        <div class="algo-weight">35%</div>
+      </div>
+      <div class="algo-stage reveal">
+        <div class="algo-dot" style="background:#0d9488; box-shadow:0 0 12px rgba(13,148,136,0.4)"></div>
+        <div class="algo-content">
+          <div class="algo-name">Values</div>
+          <div class="algo-desc">2D political compass (no party labels), religion depth, kids stance, financial philosophy, moral dilemma mapping</div>
+        </div>
+        <div class="algo-weight">25%</div>
+      </div>
+      <div class="algo-stage reveal">
+        <div class="algo-dot" style="background:#3d5af1; box-shadow:0 0 12px rgba(61,90,241,0.4)"></div>
+        <div class="algo-content">
+          <div class="algo-name">Lifestyle</div>
+          <div class="algo-desc">Sleep schedule, social energy (with complementarity curve), substances, humor reaction test, stress and coping styles, independence vs togetherness baseline</div>
+        </div>
+        <div class="algo-weight">20%</div>
+      </div>
+      <div class="algo-stage reveal">
+        <div class="algo-dot" style="background:#ec4899; box-shadow:0 0 12px rgba(236,72,153,0.4)"></div>
+        <div class="algo-content">
+          <div class="algo-name">Physical</div>
+          <div class="algo-desc">Mutual preference gates, attractiveness league matching, AI vision scoring — private, never shown to matches, used only to ensure the chemistry is real</div>
+        </div>
+        <div class="algo-weight">15%</div>
+      </div>
+      <div class="algo-stage reveal">
+        <div class="algo-dot" style="background:#f59e0b; box-shadow:0 0 12px rgba(245,158,11,0.4)"></div>
+        <div class="algo-content">
+          <div class="algo-name">Communication</div>
+          <div class="algo-desc">Conflict and repair style, texting behavior analysis, emotional regulation patterns, vulnerability pace, digital footprint signals</div>
+        </div>
+        <div class="algo-weight">12%</div>
+      </div>
+      <div class="algo-stage reveal">
+        <div class="algo-dot" style="background:#22c55e; box-shadow:0 0 12px rgba(34,197,94,0.4)"></div>
+        <div class="algo-content">
+          <div class="algo-name">Semantic layer</div>
+          <div class="algo-desc">AI compares free-text responses across both profiles — how you describe falling in love, story completions, free associations — finding patterns language reveals that no checkbox captures</div>
+        </div>
+        <div class="algo-weight">+</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANIFESTO -->
+  <div class="manifesto reveal">
+    <p class="manifesto-quote">
+      "In an ancient time, we were whole.<br>
+      Now we find the pieces of ourselves in others.<br>
+      WeekOne is built on one belief: your person exists.<br>
+      We just have to find them."
+    </p>
+    <span class="manifesto-author">The WeekOne thesis</span>
+  </div>
+
+  <!-- BOTTOM CTA -->
+  <div class="bottom-cta">
+    <h2 class="bottom-cta-title reveal">
+      Your person is<br>
+      <em>already out there.</em>
+    </h2>
+    <p class="bottom-cta-sub reveal">Get early access when we open the doors.</p>
+
+    <div class="waitlist-form reveal" id="waitlistForm2">
+      <input type="email" id="emailInput2" placeholder="your@email.com" autocomplete="email">
+      <button type="button" onclick="submitWaitlist2()">Join the waitlist</button>
+    </div>
+    <div class="success-msg" id="successMsg2" style="font-size:1.1rem">
+      You're in. See you Sunday.
+    </div>
+    <p class="form-note reveal" style="text-align:center; margin-top:0.9rem">
+      Early members get first access to the founding cohort match cycle.
+    </p>
+  </div>
+</main>
+
+<footer>
+  <p class="footer-text">© 2026 WeekOne &nbsp;·&nbsp; Built with intention &nbsp;·&nbsp; The algorithm is never paywalled</p>
+</footer>
+
+<script>
+// Cursor
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+
+// Stars
+const starsEl = document.getElementById('stars');
+for (let i = 0; i < 120; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const size = Math.random() * 2 + 0.5;
+  const minOp = (Math.random() * 0.1 + 0.05).toFixed(2);
+  const maxOp = (Math.random() * 0.4 + 0.2).toFixed(2);
+  s.style.cssText = `
+    width:${size}px; height:${size}px;
+    left:${Math.random()*100}%;
+    top:${Math.random()*100}%;
+    --d:${3+Math.random()*6}s;
+    --delay:-${Math.random()*6}s;
+    --min-op:${minOp};
+    --max-op:${maxOp};
+  `;
+  starsEl.appendChild(s);
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 60);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Waitlist submit — stores locally since no backend yet
+function submitWaitlist() {
+  const email = document.getElementById('emailInput').value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById('emailInput').style.borderColor = 'rgba(255,107,107,0.6)';
+    setTimeout(() => document.getElementById('emailInput').style.borderColor = '', 1500);
+    return;
+  }
+  saveEmail(email);
+  document.getElementById('waitlistForm').style.display = 'none';
+  document.getElementById('successMsg').style.display = 'block';
+}
+
+function submitWaitlist2() {
+  const email = document.getElementById('emailInput2').value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById('emailInput2').style.borderColor = 'rgba(255,107,107,0.6)';
+    setTimeout(() => document.getElementById('emailInput2').style.borderColor = '', 1500);
+    return;
+  }
+  saveEmail(email);
+  document.getElementById('waitlistForm2').style.display = 'none';
+  document.getElementById('successMsg2').style.display = 'block';
+}
+
+function saveEmail(email) {
+  const existing = JSON.parse(localStorage.getItem('weekone_waitlist') || '[]');
+  if (!existing.includes(email)) {
+    existing.push(email);
+    localStorage.setItem('weekone_waitlist', JSON.stringify(existing));
+  }
+  // Log for easy retrieval
+  console.log('Waitlist emails:', JSON.parse(localStorage.getItem('weekone_waitlist')));
+}
+
+// Enter key
+document.getElementById('emailInput').addEventListener('keydown', e => { if(e.key==='Enter') submitWaitlist(); });
+document.getElementById('emailInput2').addEventListener('keydown', e => { if(e.key==='Enter') submitWaitlist2(); });
+
+// Nav waitlist link — scroll to input and focus it
+document.getElementById('navWaitlist').addEventListener('click', function(e) {
+  e.preventDefault();
+  const input = document.getElementById('emailInput');
+  input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(() => input.focus(), 500);
+});
+</script>
+
+</body>
+</html>
