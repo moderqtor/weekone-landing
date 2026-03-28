@@ -715,7 +715,7 @@
 
 <script>
 const SUPABASE_URL = 'https://nfjoxixjeiprbzxotxbx.supabase.co';
-const SUPABASE_ANON_KEY = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mam94aXhqZWlwcmJ6eG90eGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTc4MzIsImV4cCI6MjA5MDIzMzgzMn0._ShNQDZ5k9c4AEUeboL9Jh57m9J8wvW7m9903BHGINg';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mam94aXhqZWlwcmJ6eG90eGJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTc4MzIsImV4cCI6MjA5MDIzMzgzMn0._ShNQDZ5k9c4AEUeboL9Jh57m9J8wvW7m9903BHGINg';
 
 // Stars
 const starsEl = document.getElementById('stars');
@@ -781,11 +781,11 @@ async function submitWaitlist2() {
 
 async function saveEmail(email) {
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+    await fetch(SUPABASE_URL + '/rest/v1/waitlist', {
       method: 'POST',
       headers: {
         'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
       },
